@@ -1,13 +1,13 @@
 from Playerinit import mage, warrior, tank, healer
 
 #This takes the input then stores the name in a str for later use 
-name = input("What is the name of your char?")
+name = input("What is the name of your char? ")
 #This takes the input for the class then makes it lowercase for easier to write the if statements
 
 
 #These if statements just ask if what you typed in is a class if not the while loop has you put in a new name 
 while(True):
-    choice = input("What class would you like to be?").lower()
+    choice = input("What class would you like to be? ").lower()
     if choice == "mage":
         hero = mage(name)
         break

@@ -1,11 +1,12 @@
 
 # Creates a player class for ease of use when initilizing is also used for other classes 
 class Player: 
+    # this initializes the name, health and attack power for later use in all of the classes 
     def __init__(self, name, health, attack_power):
         self.name = name
         self.health = health
         self.attack_power = attack_power
-        
+    #This displays all the status of all the self. functions that are defined in the __init__ above 
     def DisplayStatus(self):
         print(f"Name: {self.name} ")
         print(f"Health: {self.health}")
