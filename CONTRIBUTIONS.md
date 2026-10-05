@@ -21,13 +21,10 @@ in - the rest of this file is one row per member, per milestone, against their s
 
 | Student | Slice (the feature they own) |
 |---------|------------------------------|
-| <name>  | <feature>                    |
-| <name>  | <feature>                    |
-| <name>  | <feature>                    |
-| <name>  | <feature>                    |
-| <name>  | <feature>                    |
-
-<!-- Teams of four: delete the fifth row, here and in the tables below. -->
+| <Soham>  | <Movement and Direction, Dungeons> |
+| <Aiden>  | <Player and classes> |
+| <Faryan> | <combat and bosses>  |
+| <Lucus>  | <Main game loop> | 
 
 ---
 
@@ -67,13 +64,12 @@ Worked example:
 
 ## Milestone 2 - Practical Application (Unit 03)
 
-| Student | OOP | File I/O | Recursion | Command-line args | Interface (TUI/GUI) |
-|---------|-----|----------|-----------|-------------------|---------------------|
-| <name>  |     |          |           |                   |                     |
-| <name>  |     |          |           |                   |                     |
-| <name>  |     |          |           |                   |                     |
-| <name>  |     |          |           |                   |                     |
-| <name>  |     |          |           |                   |                     |
+| Student  | OOP | File I/O | Recursion | Command-line args | Interface (TUI/GUI) |
+|----------|-----|----------|-----------|-------------------|---------------------|
+| <Soham>  |689e4c7|          |           |                 |                     |
+| <Aiden>  |0683c93|          |           |                 |                     |
+| <Faryan> |d0a7ffd|          |           |                  |                    |
+| <Lucus>  |       |          |           |                   |                     |
 
 ## Milestone 3 - Final Product (Units 04-05)
 

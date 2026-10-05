@@ -1,4 +1,5 @@
-from Playerinit import mage, warrior, tank, healer
+from Playerinit import Player, mage, warrior, tank, healer
+from Combat import fight
 
 #This takes the input then stores the name in a str for later use 
 name = input("What is the name of your char? ")
@@ -24,3 +25,7 @@ while(True):
         print(f"This is not a class please try again there is only 4 classes mage, tank, warrior, healer")
 
 hero.DisplayStatus()
+
+Goblin = Player("Goblin", 50, 10)
+
+fight(hero, Goblin)
