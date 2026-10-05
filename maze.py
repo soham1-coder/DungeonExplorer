@@ -27,6 +27,8 @@ class Maze:
 
     #Boss fight detection (based on position in array)
     def is_boss(self, row, col):
+        if self.is_wall(row, col):
+            return False
         return self.grid[row][col] == "B"
 
 
@@ -41,6 +43,11 @@ class Maze:
 
     #The exit will be the open row in the right most columm (TBD)
     def find_exit(self):
+        last_col = len(self.grid[0]) - 1
+        for row in range(len(self.grid)):
+            if not self.is_wall(row, last_col):
+                return (row, last_col)
+        raise ValueError("Dungeon/Maze has no exit")
 
 
     #Checks if they went pass the boss position
