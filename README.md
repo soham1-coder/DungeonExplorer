@@ -2,19 +2,16 @@
 
 ## The application
 
-<Two or three sentences: what are you building, and who plays or uses it? It has to fit the
-networked, multi-user theme - see the "Suggested projects" section of
-[`MILESTONES.md`](MILESTONES.md). Name one of the suggestions, or describe your own idea.>
+<A networked, multiplayer maze-dungeon game. Several players connect to one server and explore the same maze at once, each moving their own character through it. They have to fight bosses (B) along the way, and the first player to reach the exit wins. The server keeps the authoritative maze and every player's position, and each client shows the shared grid in the terminal.>
 
 ## The team
 
 | Full name | GitHub username |
 |-----------|-----------------|
-| <name>    | @<username>     |
-| <name>    | @<username>     |
-| <name>    | @<username>     |
-| <name>    | @<username>     |
-| <name>    | @<username>     |
+| <Soham>  | @<soham1-coder  |
+| <Aiden>  | @<tenmon_c>     |
+| <Faryan> | @ <FaryanAzizianOntario> |
+| <Lucas>  | @<LucasD1708>   |
 
 Note:  Be sure to [add all of the group members to as collaborators on this repository](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/repository-access-and-collaboration/inviting-collaborators-to-a-personal-repository).
 
