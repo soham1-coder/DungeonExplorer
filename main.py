@@ -8,17 +8,10 @@ from Playerinit import Player, mage, warrior, tank, healer
 from maze import Maze
 from maze_explorer import Explorer, show_status
 from Combat import fight
+from PlayerTest import choose_hero
 
 CLASSES = {"mage": mage, "warrior": warrior, "tank": tank, "healer": healer}
 
-
-def choose_hero():
-    name = input("What is the name of your character? ").strip() or "Hero"
-    while True:
-        choice = input("Choose a class (mage, warrior, tank, healer): ").strip().lower()
-        if choice in CLASSES:
-            return CLASSES[choice](name)
-        print("That is not a class, please try again.")
 
 #initializes a maze upon game start
 def draw_maze(maze, explorer):
