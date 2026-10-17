@@ -80,6 +80,12 @@ class Play:
 
         print("Game Over")
 
+#displays the current direction and a navigation guide to help the user explore the maze
+def show_status(explorer):
+    print(f"You are facing: {explorer.direction.label} ({explorer.direction.symbol})")
+    print("Controls:  F = move forward | L = turn left | R = turn right | Q = quit")
+    print("Legend:    # = wall | B = boss | arrow = you")
+
 #this is the main, all it really does for now is execute the game loop in the Play class
 def main():
     game = Play()
