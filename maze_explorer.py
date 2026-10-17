@@ -51,10 +51,4 @@ class Explorer:
         return True
 
 
-def show_status(explorer):
-    print(f"You are facing: {explorer.direction.label} ({explorer.direction.symbol})")
-    print("Controls:  F = move forward | L = turn left | R = turn right | Q = quit")
-    print("Legend:    # = wall | B = boss | arrow = you")
-
-
 
