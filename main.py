@@ -34,9 +34,8 @@ class Play:
 #ensuring that while the player is "alive  " the game remains active allowing movement through the maze and engaging with the surroudings
         while self.hero.health > 0:
 
-            # Show maze, importing the grid of the maze
-            for row in self.maze.grid:
-                print("".join(row))
+            #shows a new maze every turn to keep player symbol updated
+            draw_maze(self.maze, self.explorer)
 
             # recieves players input for direction and movement as well as quitting out
             choice = input("F = move, L = left, R = right, Q = quit: ").lower()
@@ -79,6 +78,16 @@ class Play:
                 print("Invalid input")
 
         print("Game Over")
+
+#shows the maze grid with a player symbol (an arrow) on the player's current cell
+def draw_maze(maze, explorer):
+    print()
+    for r, row in enumerate(maze.grid):
+        line = ""
+        for c, cell in enumerate(row):
+            line += explorer.direction.symbol if (r, c) == (explorer.row, explorer.col) else cell
+        print(line)
+    print()
 
 #displays the current direction and a navigation guide to help the user explore the maze
 def show_status(explorer):
