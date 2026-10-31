@@ -41,8 +41,10 @@ class Play:
         self.explorer = Explorer(self.maze)
         self.exit = self.maze.find_exit()
 
+
     def game_loop(self):
-#ensuring that while the player is "alive  " the game remains active allowing movement through the maze and engaging with the surroudings
+        
+        #ensuring that while the player is "alive  " the game remains active allowing movement through the maze and engaging with the surroudings
         while self.hero.health > 0:
 
             #shows a new maze every turn to keep player symbol updated
@@ -110,7 +112,8 @@ def draw_maze(maze, explorer):
 
 
 def main():
-    Play()
+    game = Play()
+    game.game_loop()
 
 
 if __name__ == '__main__':
