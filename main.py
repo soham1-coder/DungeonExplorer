@@ -29,6 +29,7 @@ class Play:
 
         self.maze = Maze()
         self.explorer = Explorer(self.maze)
+        self.exit = self.maze.find_exit()
 
     def game_loop(self):
 #ensuring that while the player is "alive  " the game remains active allowing movement through the maze and engaging with the surroudings
@@ -36,6 +37,7 @@ class Play:
 
             #shows a new maze every turn to keep player symbol updated
             draw_maze(self.maze, self.explorer)
+            show_status(self.explorer)
 
             # recieves players input for direction and movement as well as quitting out
             choice = input("F = move, L = left, R = right, Q = quit: ").lower()
@@ -61,7 +63,14 @@ class Play:
 
                         elif result == "lose":
                             break
-#running the other possiblities so we dont run into an error and the recursion continues
+
+                    #reaching the exit cell in the right column wins the game
+                    if (self.explorer.row, self.explorer.col) == self.exit:
+                        draw_maze(self.maze, self.explorer)
+                        print("You found the exit. You win!")
+                        break
+                        
+                #running the other possiblities so we dont run into an error and the recursion continues
                 else:
                     print("There is a wall!")
 
