@@ -66,10 +66,10 @@ Worked example:
 
 | Student  | OOP | File I/O | Recursion | Command-line args | Interface (TUI/GUI) |
 |----------|-----|----------|-----------|-------------------|---------------------|
-| <Soham>  |689e4c7|          |           |                 |                     |
-| <Aiden>  |0683c93|          |           |                 |                     |
-| <Faryan> |d0a7ffd|          |           |                  |                    |
-| <Lucus>  |       |          |           |                   |                     |
+| <Soham>  |689e4c7|          |           |                 |        TBD          |
+| <Aiden>  |0683c93|   TBD    |           |                 |                     |
+| <Faryan> |d0a7ffd|          |           |      TBD        |                     |
+| <Lucus>  |       |          |    TBD    |                 |                     |
 
 ## Milestone 3 - Final Product (Units 04-05)
 
