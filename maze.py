@@ -41,7 +41,7 @@ class Maze:
     
 
 
-    #The exit will be the open row in the right most columm (TBD)
+    #The exit will be the open row in the right most columm
     def find_exit(self):
         last_col = len(self.grid[0]) - 1
         for row in range(len(self.grid)):

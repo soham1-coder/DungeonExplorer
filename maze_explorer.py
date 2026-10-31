@@ -1,5 +1,4 @@
 from enum import Enum
-
 #Using enumeration to keep a clear name of the directions used in the game and avoid magic numbers
 
 from maze import Maze
@@ -50,7 +49,7 @@ class Explorer:
         self.row, self.col = new_row, new_col
         return True
 
-
+#Navigation guide with controls, legend and current player direction
 def show_status(explorer):
     print(f"You are facing: {explorer.direction.label} ({explorer.direction.symbol})")
     print("Controls:  F = move forward | L = turn left | R = turn right | Q = quit")
