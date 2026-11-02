@@ -67,7 +67,7 @@ Worked example:
 | Student  | OOP | File I/O | Recursion | Command-line args | Interface (TUI/GUI) |
 |----------|-----|----------|-----------|-------------------|---------------------|
 | <Soham>  |689e4c7|          |           |                 |        PR #6+#7     |
-| <Aiden>  |0683c93| fc2bb3b  |           |                 |                     |
+| <Aiden>  |0683c93|   TBD    |           |                 |                     |
 | <Faryan> |d0a7ffd|          |           |      TBD        |                     |
 | <Lucus>  |       |          |    TBD    |                 |                     |
 
