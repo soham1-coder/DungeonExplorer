@@ -63,7 +63,7 @@ print("Position: Row", r, "Col", c)
 print("Steps taken:", steps)
 print("does the boss exists:", loaded_maze.is_boss(3, 14))
 
-print("\n high score test")
+print("\nhigh score test")
 score_file = "test_scores.csv"
 
 # Remove test score file if it exists from a previous run
