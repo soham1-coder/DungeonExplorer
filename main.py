@@ -1,8 +1,5 @@
-"""Entry point for the group project.
-
-`python main.py` must run your project at every milestone, so keep this file working
-from Milestone 1 onward.
-"""
+import os
+from save_system import save_game, load_game, save_high_score, load_high_scores
 
 from Playerinit import Player, mage, warrior, tank, healer
 from maze import Maze
@@ -11,35 +8,37 @@ from Combat import fight
 from PlayerTest import choose_hero
 
 CLASSES = {"mage": mage, "warrior": warrior, "tank": tank, "healer": healer}
+SAVE_FILE = "savegame.json"
+SCORE_FILE = "high_scores.csv"
 
 
 #initializes a maze upon game start
 class Play:
-#a little janky but it works to create a character and chose the class
-    def __init__(self):
-        name = input("What is the name of your character? ")
+    def __init__(self, hero=None, maze=None, row=None, col=None, steps=0, bosses_defeated=0):
+            if hero is None:
+                name = input("What is the name of your character? ")
+                while True:
+                    choice = input("What class would you like to be? -help(TBD) for info").lower()
+                    if choice in CLASSES:
+                        self.hero = CLASSES[choice](name)
+                        break
+                    else:
+                        print("Invalid, (mage, warrior, tank, healer)")
 
-        while True:
-            choice = input("What class would you like to be? -help for info").lower()
-
-            if choice == "mage":
-                self.hero = mage(name)
-                break
-            elif choice == "warrior":
-                self.hero = warrior(name)
-                break
-            elif choice == "tank":
-                self.hero = tank(name)
-                break
-            elif choice == "healer":
-                self.hero = healer(name)
-                break
+                self.maze = Maze()
+                self.explorer = Explorer(self.maze)
             else:
-                print("Invalid, (mage, warrior, tank, healer)")
+                # Rebuild state from loaded save file
+                self.hero = hero
+                self.maze = maze if maze else Maze()
+                self.explorer = Explorer(self.maze)
+                if row is not None and col is not None:
+                    self.explorer.row = row
+                    self.explorer.col = col
 
-        self.maze = Maze()
-        self.explorer = Explorer(self.maze)
-        self.exit = self.maze.find_exit()
+            self.exit = self.maze.find_exit()
+            self.steps = steps
+            self.bosses_defeated = bosses_defeated
 
 
     def game_loop(self):
@@ -51,8 +50,8 @@ class Play:
             draw_maze(self.maze, self.explorer)
             show_status(self.explorer)
 
-            # recieves players input for direction and movement as well as quitting out
-            choice = input("F = move, L = left, R = right, Q = quit: ").lower()
+            # recieves players input for direction, movement as well as saving and quitting out
+            choice = input("F = move, L = left, R = right, S = save, Q = quit: ").lower()
 
             if choice == "f":
 
@@ -74,12 +73,16 @@ class Play:
                             )
 
                         elif result == "lose":
+                            save_high_score(SCORE_FILE, self.hero.name, self.hero.__class__.__name__, self.steps, self.bosses_defeated, "DEFEATED")
                             break
 
                     #reaching the exit cell in the right column wins the game
                     if (self.explorer.row, self.explorer.col) == self.exit:
                         draw_maze(self.maze, self.explorer)
                         print("You found the exit. You win!")
+
+                        #Log high score on win
+                        save_high_score(SCORE_FILE, self.hero.name, self.hero.__class__.__name__, self.steps, self.bosses_defeated, "VICTORY")
                         break
                         
                 #running the other possiblities so we dont run into an error and the recursion continues
@@ -91,6 +94,16 @@ class Play:
 
             elif choice == "r":
                 self.explorer.turn_right()
+
+            elif choice == "s":
+                try:
+                    save_game(SAVE_FILE, self.hero, self.explorer.row, self.explorer.col, self.maze, self.steps, {"bosses_defeated": self.bosses_defeated})    
+                    print("Game saved!")
+                except (OSError, TypeError) as e:
+                        print(f"Could not save: {e}")
+
+            #elif choice == "q" and saved != True:  
+               # print("Are you sure you would like to quit before saving?")  
 
             elif choice == "q":
                 break
@@ -119,10 +132,54 @@ def draw_maze(maze, explorer):
         print(line)
     print()
 
+def view_leaderboard():
+    scores = load_high_scores(SCORE_FILE)
+    if not scores:
+        print("\nNo high score records found yet!")
+        return
+    print("\nhigh scores")
+    print(f"{'Rank':<5} {'Name':<15} {'Class':<10} {'Steps':<8} {'Bosses':<8} {'Status':<10}")
+    print("-" * 60)
+    for idx, entry in enumerate(scores, 1):
+        print(
+            f"{idx:<5} {entry.get('Player Name',''):<15} {entry.get('Class',''):<10} "
+            f"{entry.get('Steps',''):<8} {entry.get('Bosses Defeated',''):<8} {entry.get('Status',''):<10}")
 
 def main():
-    game = Play()
-    game.game_loop()
+
+    while True:
+        print("\nDungeon Explorer")
+        print("1. Start New Game")
+        print("2. Load Saved Game")
+        print("3. View Leaderboard")
+        print("4. Exit")
+
+        choice = input("\nSelect an option (1-4): ").strip()
+
+        if choice == "1":
+            game = Play()
+            game.game_loop()
+
+        elif choice == "2":
+            try:
+                hero, row, col, dungeon, steps, extra = load_game(SAVE_FILE)
+                bosses = extra.get("bosses_defeated", 0)
+                game = Play(hero=hero, maze=dungeon, row=row, col=col, steps=steps, bosses_defeated=bosses)
+                game.game_loop()
+            except FileNotFoundError:
+                print(f"\nNo save file found at '{SAVE_FILE}'. Please start a new game ")
+            except Exception as e:
+                print(f"\nError loading save file: {e}")
+
+        elif choice == "3":
+            view_leaderboard()
+
+        elif choice == "4":
+            print("Goodbye!")
+            break
+
+        else:
+            print("Invalid selection! Please enter 1, 2, 3, or 4.")
 
 
 if __name__ == '__main__':
