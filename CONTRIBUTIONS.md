@@ -68,8 +68,8 @@ Worked example:
 |----------|-----|----------|-----------|-------------------|---------------------|
 | <Soham>  |689e4c7|          |           |                 |        PR #6+#7     |
 | <Aiden>  |0683c93| fc2bb3b  |           |                 |                     |
-| <Faryan> |d0a7ffd|          |           |      TBD        |                     |
-| <Lucus>  |       |          |    TBD    |                 |                     |
+| <Faryan> |d0a7ffd|          |           |      aafbc88    |                     |
+| <Lucus>  |       |          |    57b5   |                 |                     |
 
 ## Milestone 3 - Final Product (Units 04-05)
 
