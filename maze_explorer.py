@@ -44,6 +44,7 @@ class Explorer:
 
         new_row = self.row + self.direction.d_row
         new_col = self.col + self.direction.d_col
+        
         if self.maze.is_wall(new_row, new_col):
             return False
         self.row, self.col = new_row, new_col
