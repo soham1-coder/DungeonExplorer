@@ -25,6 +25,7 @@ BOSS_STUN_TURNS = 3
 class Maze:
     def __init__(self, rows=None):
         self.grid = [list(row) for row in (rows or DEFAULT_MAZE)]
+
         #per-boss health and stun, keyed by (row, col); a boss with no entry is at full health and not stunned
         self.boss_state = {}
 
@@ -61,7 +62,6 @@ class Maze:
         raise ValueError("Dungeon/Maze has no entrance")
     
 
-
     #The exit will be the open row in the right most columm
     def find_exit(self):
         last_col = len(self.grid[0]) - 1
@@ -76,50 +76,76 @@ class Maze:
         self.grid[row][col] = " "
         self.boss_state.pop((row, col), None)
 
-    #Greedy step: look at the open neighbours and pick the one with the smallest Manhattan distance to the target.
-    #Only takes a step that gets strictly closer, so a boss can get stuck behind a wall (no backtracking).
-    #Returns None if the target is further than max_dist or no neighbour is closer
+    #Greedy strategy: look at the open neighbours and pick the one with the smallest Manhattan distance to the target
+    #Only takes a step that gets strictly closer because Manhattan distance ignores walls, so a boss can get stuck behind a wall (no backtracking), this balances difficulty
     def greedy_step_toward(self, start, target, exit_pos, max_dist=BOSS_AGGRO_RANGE):
+
+        #calculates Manhattan distance instead of Euclidean because its moving throughout a grid
         def manhattan(a, b):
             return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
-        best = start
+        best = start 
         best_dist = manhattan(start, target)
+
+        #returns None if the target is further than max_dist or no neighbour is closer
         if best_dist > max_dist:
             return None
+        
+        #all possible neighbour cells
         for d_row, d_col in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-            nxt = (start[0] + d_row, start[1] + d_col)
+
+            nxt = (start[0] + d_row, start[1] + d_col) #finds the neighbouring cell that the boss will step into next
+
             if self.is_wall(*nxt) or nxt == exit_pos:
                 continue
+
             #cannot step onto another boss, but can step onto the player
             if nxt != target and self.grid[nxt[0]][nxt[1]] != " ":
                 continue
-            d = manhattan(nxt, target)
-            if d < best_dist:
-                best, best_dist = nxt, d
-        return None if best == start else best
 
-    #Moves every boss one cell toward the player using the greedy step above.
-    #Bosses never step onto other bosses or the exit. Returns True if a boss reached the player
+            d = manhattan(nxt, target)
+
+            #looks for the next step with the smallest Manhattan distance and that will be the best next step (which the boss will greedily take)
+            if d < best_dist:
+                best = nxt
+                best_dist = d
+
+        if best == start:
+            return None
+        return best
+
+    #Moves every boss one cell toward the player using the greedy strategy
+    #Bosses never step onto other bosses or the exit
     def move_bosses(self, player_pos, max_dist=BOSS_AGGRO_RANGE):
+
         exit_pos = self.find_exit()
+
+        #finds boss locations throughout grid
         bosses = [(r, c) for r, row in enumerate(self.grid)
                   for c, cell in enumerate(row) if cell == "B"]
+        
         for boss in bosses:
+
             #a stunned boss loses a turn of stun instead of moving
             state = self.boss_state.get(boss)
+
             if state and state["stun"] > 0:
                 state["stun"] -= 1
                 continue
+
             step = self.greedy_step_toward(boss, player_pos, exit_pos, max_dist)
             if step is None:
                 continue
             self.grid[boss[0]][boss[1]] = " "
             self.grid[step[0]][step[1]] = "B"
+
             #the boss keeps its health when it moves
             if state:
                 self.boss_state[step] = self.boss_state.pop(boss)
+
+            #returns True if a boss reached the player
             if step == player_pos:
                 return True
+            
         return False
 
