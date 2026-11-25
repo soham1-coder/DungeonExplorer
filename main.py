@@ -18,6 +18,8 @@ class undoStack:
     def __init__(self):
         self.items = []
     def push(self, item):
+        if len(self.items) >= 4:
+            self.items.pop(0)
         self.items.append(item)
     def pop(self):
         if not self.is_empty():
@@ -29,6 +31,8 @@ class undoStack:
         return None
     def is_empty(self):
         return len(self.items) == 0
+    def clear(self):
+        self.items = []
 
 
 class Play:
@@ -84,7 +88,7 @@ class Play:
                         self.explorer.col
                     ):
                         enemy = Player("Goblin", 50, 10)
-
+                        self.history.clear()
                         result = fight(self.hero, enemy)
 
                         if result == "win":
