@@ -2,7 +2,7 @@ import os
 from save_system import save_game, load_game, save_high_score, load_high_scores
 
 from Playerinit import Player, mage, warrior, tank, healer
-from maze import Maze
+from maze import Maze, BOSS_STUN_TURNS
 from maze_explorer import Explorer, show_status
 from Combat import fight
 from PlayerTest import choose_hero
@@ -14,7 +14,7 @@ SCORE_FILE = "high_scores.csv"
 
 #initializes a maze upon game start
 class Play:
-    def __init__(self, hero=None, maze=None, row=None, col=None, steps=0, bosses_defeated=0):
+    def __init__(self, hero=None, maze=None, row=None, col=None, steps=0, bosses_defeated=0, boss_state=None):
             if hero is None:
                 name = input("What is the name of your character? ")
                 while True:
@@ -36,14 +36,36 @@ class Play:
                     self.explorer.row = row
                     self.explorer.col = col
 
+            if boss_state:
+                self.maze.load_boss_state(boss_state)
+
             self.exit = self.maze.find_exit()
             self.steps = steps
             self.bosses_defeated = bosses_defeated
 
 
+    #Fights the boss on the player's cell, clears it on a win and logs the score on a loss
+    def boss_fight(self):
+        pos = (self.explorer.row, self.explorer.col)
+        state = self.maze.get_boss_state(pos)
+        enemy = Player("Goblin", state["health"], 10)
+        result = fight(self.hero, enemy)
+
+        if result == "win":
+            self.maze.clear_boss(*pos)
+            self.bosses_defeated += 1
+        elif result == "ran away":
+            #the boss keeps the damage it took and is frozen for a few steps so the player gets a head start
+            state["health"] = enemy.health
+            state["stun"] = BOSS_STUN_TURNS
+        elif result == "lose":
+            save_high_score(SCORE_FILE, self.hero.name, self.hero.__class__.__name__, self.steps, self.bosses_defeated, "DEFEATED")
+        return result
+
     def game_loop(self):
 
-        #ensuring that while the player is "alive  " the game remains active allowing movement through the maze and engaging with the surroudings
+        saved = False
+        #ensuring that while the player is "alive" the game remains active allowing movement through the maze and engaging with the surroudings
         while self.hero.health > 0:
 
             #shows a new maze every turn to keep player symbol updated
@@ -54,6 +76,7 @@ class Play:
             choice = input("F = move, L = left, R = right, S = save, Q = quit: ").lower()
 
             if choice == "f":
+                saved = False
 
                 if self.explorer.move_forward():
 
@@ -62,18 +85,13 @@ class Play:
                         self.explorer.row,
                         self.explorer.col
                     ):
-                        enemy = Player("Goblin", 50, 10)
+                        if self.boss_fight() == "lose":
+                            break
 
-                        result = fight(self.hero, enemy)
-
-                        if result == "win":
-                            self.maze.clear_boss(
-                                self.explorer.row,
-                                self.explorer.col
-                            )
-
-                        elif result == "lose":
-                            save_high_score(SCORE_FILE, self.hero.name, self.hero.__class__.__name__, self.steps, self.bosses_defeated, "DEFEATED")
+                    # bosses then take one step toward the player (greedy), and fight if they reach them
+                    elif self.maze.move_bosses((self.explorer.row, self.explorer.col)):
+                        print("A boss caught you!")
+                        if self.boss_fight() == "lose":
                             break
 
                     #reaching the exit cell in the right column wins the game
@@ -90,22 +108,30 @@ class Play:
                     print("There is a wall!")
 
             elif choice == "l":
+                saved = False
                 self.explorer.turn_left()
 
             elif choice == "r":
+                saved = False
                 self.explorer.turn_right()
 
             elif choice == "s":
                 try:
-                    save_game(SAVE_FILE, self.hero, self.explorer.row, self.explorer.col, self.maze, self.steps, {"bosses_defeated": self.bosses_defeated})    
-                    print("Game saved!")
+                    save_game(SAVE_FILE, self.hero, self.explorer.row, self.explorer.col, self.maze, self.steps, {"bosses_defeated": self.bosses_defeated, "boss_state": self.maze.boss_state_to_list()})    
+                    saved = True
+                    print("Game saved.")
                 except (OSError, TypeError) as e:
                         print(f"Could not save: {e}")
 
-            #elif choice == "q" and saved != True:  
-               # print("Are you sure you would like to quit before saving?")  
-
             elif choice == "q":
+            
+                if not saved:
+                    save_quit = input("would you like to save before you quit? ").lower()
+                    if save_quit in ["y", "yes"]:
+                        try:
+                            save_game(SAVE_FILE, self.hero, self.explorer.row, self.explorer.col, self.maze, self.steps, {"bosses_defeated": self.bosses_defeated, "boss_state": self.maze.boss_state_to_list()})
+                        except (OSError, TypeError) as e:
+                            print(f"Could not save: {e}")
                 break
 
             else:
@@ -164,7 +190,7 @@ def main():
             try:
                 hero, row, col, dungeon, steps, extra = load_game(SAVE_FILE)
                 bosses = extra.get("bosses_defeated", 0)
-                game = Play(hero=hero, maze=dungeon, row=row, col=col, steps=steps, bosses_defeated=bosses)
+                game = Play(hero=hero, maze=dungeon, row=row, col=col, steps=steps, bosses_defeated=bosses, boss_state=extra.get("boss_state"))
                 game.game_loop()
             except FileNotFoundError:
                 print(f"\nNo save file found at '{SAVE_FILE}'. Please start a new game ")

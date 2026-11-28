@@ -11,6 +11,8 @@ class Player:
         print(f"Name: {self.name} ")
         print(f"Health: {self.health}")
         print(f"Attack_power: {self.attack_power}")
+    def classInfo(self):
+        print(f"")
         
 # creates a subclassed named mage. Gives attack power health and the name of the created player with the addition
 # of a special stat exclusive to the Subclass
